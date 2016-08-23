@@ -37,4 +37,4 @@ clean:
 	rm -f $(SRC_DIR)/*.o *.bin
 
 run-tests:
-	@find -name "*.bin" -exec valgrind --leak-check=full --show-leak-kinds=all {} \;
+	@for f in *.bin; do valgrind --leak-check=full --show-leak-kinds=all ./$$f; echo; done
