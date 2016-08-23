@@ -46,6 +46,10 @@
 ************************************************************************************************************************
 */
 
+#define LILI_NO_DYNAMIC_ALLOCATION
+#define LILI_MAX_LISTS      10
+#define LILI_MAX_NODES      100
+
 
 /*
 ************************************************************************************************************************
@@ -60,7 +64,7 @@ typedef struct node_t {
 } node_t;
 
 typedef struct lili_t {
-    unsigned int count;
+    int count;
     node_t *first;
     node_t *last;
 } lili_t;

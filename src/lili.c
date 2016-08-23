@@ -35,15 +35,29 @@
 ************************************************************************************************************************
 */
 
-// if alternative malloc/free is not defined then use functions from libc
-#if !defined(LILI_NO_DYNAMIC_ALLOCATION) && !defined(MALLOC)
+// if configured to not use dynamic allocation then uses internal functions
+#ifdef LILI_NO_DYNAMIC_ALLOCATION
+#define LIST_ALLOC      list_take
+#define LIST_FREE       list_give
+#define NODE_ALLOC      node_take
+#define NODE_FREE       node_give
+// using dynamic allocation
+#else
+// if user didn't define custom malloc/free functions then uses regular libc functions
+#ifndef MALLOC
 #include <stdlib.h>
-#define MALLOC  malloc
-#define FREE    free
+#define MALLOC          malloc
+#define FREE            free
+#endif
+// set macros to use previously defined malloc/free functions
+#define LIST_ALLOC      MALLOC
+#define LIST_FREE       FREE
+#define NODE_ALLOC      MALLOC
+#define NODE_FREE       FREE
 #endif
 
-#define INIT_LIST(list) if (list) {list->count = 0; list->first = 0; list->last = 0;}
-#define INIT_NODE(node) if (node) {node->next = 0; node->prev = 0; node->value = 0;}
+#define LIST_INIT(list) if (list) {list->count = 0; list->first = 0; list->last = 0;}
+#define NODE_INIT(node) if (node) {node->next = 0; node->prev = 0; node->value = 0;}
 
 
 /*
@@ -66,6 +80,11 @@
 ************************************************************************************************************************
 */
 
+#ifdef LILI_NO_DYNAMIC_ALLOCATION
+static lili_t g_lists_cache[LILI_MAX_LISTS];
+static node_t g_nodes_cache[LILI_MAX_NODES];
+#endif
+
 
 /*
 ************************************************************************************************************************
@@ -73,7 +92,84 @@
 ************************************************************************************************************************
 */
 
-static void *remove_node(lili_t *list, node_t *node)
+#ifdef LILI_NO_DYNAMIC_ALLOCATION
+static inline void *list_take(int n)
+{
+    // unused parameter
+    // it's here to make the function prototype compatible with malloc
+    (void) n;
+
+    static unsigned int lists_counter;
+
+    // first time lists are requested
+    if (lists_counter < LILI_MAX_LISTS)
+    {
+        lili_t *list = &g_lists_cache[lists_counter++];
+        return list;
+    }
+
+    // iterate all array searching for a free list
+    // a list is considered free when its count is lower than zero
+    for (int i = 0; i < LILI_MAX_LISTS; i++)
+    {
+        lili_t *list = &g_lists_cache[i];
+        if (list->count < 0)
+        {
+            list->count = 0;
+            return list;
+        }
+    }
+
+    return 0;
+}
+
+static inline void list_give(void *list)
+{
+    if (list)
+    {
+        lili_t *self = list;
+        self->count = -1;
+    }
+}
+
+static inline void *node_take(int n)
+{
+    // unused parameter
+    // it's here to make the function prototype compatible with malloc
+    (void) n;
+
+    static unsigned int nodes_counter;
+
+    // first time nodes are requested
+    if (nodes_counter < LILI_MAX_NODES)
+    {
+        node_t *node = &g_nodes_cache[nodes_counter++];
+        return node;
+    }
+
+    // iterate all array searching for a free node
+    // a node is considered free when its value is null
+    for (int i = 0; i < LILI_MAX_NODES; i++)
+    {
+        node_t *node = &g_nodes_cache[i];
+        if (node->value == 0)
+            return node;
+    }
+
+    return 0;
+}
+
+static inline void node_give(void *node)
+{
+    if (node)
+    {
+        node_t *self = node;
+        self->value = 0;
+    }
+}
+#endif
+
+static void *node_remove(lili_t *list, node_t *node)
 {
     if (!node)
         return 0;
@@ -102,7 +198,7 @@ static void *remove_node(lili_t *list, node_t *node)
     list->count--;
     void *value = node->value;
 
-    FREE(node);
+    NODE_FREE(node);
 
     return value;
 }
@@ -116,8 +212,8 @@ static void *remove_node(lili_t *list, node_t *node)
 
 lili_t *lili_create(void)
 {
-    lili_t *list = MALLOC(sizeof (lili_t));
-    INIT_LIST(list);
+    lili_t *list = LIST_ALLOC(sizeof (lili_t));
+    LIST_INIT(list);
     return list;
 }
 
@@ -126,21 +222,21 @@ void lili_destroy(lili_t *list)
     LILI_FOREACH(list, node)
     {
         if (node->prev)
-            FREE(node->prev);
+            NODE_FREE(node->prev);
     }
 
-    FREE(list->last);
-    FREE(list);
+    NODE_FREE(list->last);
+    LIST_FREE(list);
 }
 
 void lili_push(lili_t *list, void *value)
 {
-    node_t *node = MALLOC(sizeof (node_t));
+    node_t *node = NODE_ALLOC(sizeof (node_t));
 
     if (!node)
         return;
 
-    INIT_NODE(node);
+    NODE_INIT(node);
 
     node->value = value;
 
@@ -161,5 +257,5 @@ void lili_push(lili_t *list, void *value)
 
 void *lili_pop(lili_t *list)
 {
-    return remove_node(list, list->last);
+    return node_remove(list, list->last);
 }
