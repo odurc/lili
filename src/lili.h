@@ -60,7 +60,7 @@
 typedef struct node_t {
     struct node_t *next;
     struct node_t *prev;
-    void *value;
+    void *data;
 } node_t;
 
 typedef struct lili_t {
@@ -78,7 +78,7 @@ typedef struct lili_t {
 
 lili_t *lili_create(void);
 void lili_destroy(lili_t *list);
-void lili_push(lili_t *list, void *value);
+void lili_push(lili_t *list, void *data);
 void *lili_pop(lili_t *list);
 
 

@@ -57,7 +57,7 @@
 #endif
 
 #define LIST_INIT(list) if (list) {list->count = 0; list->first = 0; list->last = 0;}
-#define NODE_INIT(node) if (node) {node->next = 0; node->prev = 0; node->value = 0;}
+#define NODE_INIT(node) if (node) {node->next = 0; node->prev = 0; node->data = 0;}
 
 
 /*
@@ -152,7 +152,7 @@ static inline void *node_take(int n)
     for (int i = 0; i < LILI_MAX_NODES; i++)
     {
         node_t *node = &g_nodes_cache[i];
-        if (node->value == 0)
+        if (node->data == 0)
             return node;
     }
 
@@ -164,7 +164,7 @@ static inline void node_give(void *node)
     if (node)
     {
         node_t *self = node;
-        self->value = 0;
+        self->data = 0;
     }
 }
 #endif
@@ -196,7 +196,7 @@ static void *node_remove(lili_t *list, node_t *node)
     }
 
     list->count--;
-    void *value = node->value;
+    void *value = node->data;
 
     NODE_FREE(node);
 
@@ -229,7 +229,7 @@ void lili_destroy(lili_t *list)
     LIST_FREE(list);
 }
 
-void lili_push(lili_t *list, void *value)
+void lili_push(lili_t *list, void *data)
 {
     node_t *node = NODE_ALLOC(sizeof (node_t));
 
@@ -238,7 +238,7 @@ void lili_push(lili_t *list, void *value)
 
     NODE_INIT(node);
 
-    node->value = value;
+    node->data = data;
 
     if (list->last)
     {
