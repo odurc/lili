@@ -36,14 +36,14 @@
 */
 
 // uses standard libc malloc/free functions if custom ones aren't defined
-#if !defined(LILI_NO_DYNAMIC_ALLOCATION) && !defined(MALLOC)
+#if !defined(LILI_ONLY_STATIC_ALLOCATION) && !defined(MALLOC)
 #include <stdlib.h>
 #define MALLOC      malloc
 #define FREE        free
 #endif
 
 // uses internal functions if configured to use static allocation
-#ifdef LILI_NO_DYNAMIC_ALLOCATION
+#ifdef LILI_ONLY_STATIC_ALLOCATION
 #define LIST_ALLOC      list_take
 #define LIST_FREE       list_give
 #define NODE_ALLOC      node_take
@@ -81,7 +81,7 @@
 ************************************************************************************************************************
 */
 
-#ifdef LILI_NO_DYNAMIC_ALLOCATION
+#ifdef LILI_ONLY_STATIC_ALLOCATION
 static lili_t g_lists_cache[LILI_MAX_LISTS];
 static node_t g_nodes_cache[LILI_MAX_NODES];
 #endif
@@ -93,7 +93,7 @@ static node_t g_nodes_cache[LILI_MAX_NODES];
 ************************************************************************************************************************
 */
 
-#ifdef LILI_NO_DYNAMIC_ALLOCATION
+#ifdef LILI_ONLY_STATIC_ALLOCATION
 static inline void *list_take(int n)
 {
     // unused parameter

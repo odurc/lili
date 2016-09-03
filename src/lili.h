@@ -46,7 +46,7 @@
 ************************************************************************************************************************
 */
 
-#define LILI_NO_DYNAMIC_ALLOCATION
+#define LILI_ONLY_STATIC_ALLOCATION
 #define LILI_MAX_LISTS      10
 #define LILI_MAX_NODES      100
 
