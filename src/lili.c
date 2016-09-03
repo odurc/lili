@@ -35,21 +35,22 @@
 ************************************************************************************************************************
 */
 
-// if configured to not use dynamic allocation then uses internal functions
+// uses standard libc malloc/free functions if custom ones aren't defined
+#if !defined(LILI_NO_DYNAMIC_ALLOCATION) && !defined(MALLOC)
+#include <stdlib.h>
+#define MALLOC      malloc
+#define FREE        free
+#endif
+
+// uses internal functions if configured to use static allocation
 #ifdef LILI_NO_DYNAMIC_ALLOCATION
 #define LIST_ALLOC      list_take
 #define LIST_FREE       list_give
 #define NODE_ALLOC      node_take
 #define NODE_FREE       node_give
-// using dynamic allocation
+
+// uses macro defined functions if configured to use dynamic allocation
 #else
-// if user didn't define custom malloc/free functions then uses regular libc functions
-#ifndef MALLOC
-#include <stdlib.h>
-#define MALLOC          malloc
-#define FREE            free
-#endif
-// set macros to use previously defined malloc/free functions
 #define LIST_ALLOC      MALLOC
 #define LIST_FREE       FREE
 #define NODE_ALLOC      MALLOC
@@ -108,8 +109,8 @@ static inline void *list_take(int n)
         return list;
     }
 
-    // iterate all array searching for a free list
-    // a list is considered free when its count is lower than zero
+    // iterate all array searching for a free spot
+    // a list is considered free when its count value is lower than zero
     for (int i = 0; i < LILI_MAX_LISTS; i++)
     {
         lili_t *list = &g_lists_cache[i];
@@ -147,7 +148,7 @@ static inline void *node_take(int n)
         return node;
     }
 
-    // iterate all array searching for a free node
+    // iterate all array searching for a free spot
     // a node is considered free when its value is null
     for (int i = 0; i < LILI_MAX_NODES; i++)
     {
@@ -168,6 +169,18 @@ static inline void node_give(void *node)
     }
 }
 #endif
+
+static node_t *node_create(void *data)
+{
+    node_t *node = NODE_ALLOC(sizeof (node_t));
+
+    NODE_INIT(node);
+
+    if (node)
+        node->data = data;
+
+    return node;
+}
 
 static void *node_remove(lili_t *list, node_t *node)
 {
@@ -231,14 +244,7 @@ void lili_destroy(lili_t *list)
 
 void lili_push(lili_t *list, void *data)
 {
-    node_t *node = NODE_ALLOC(sizeof (node_t));
-
-    if (!node)
-        return;
-
-    NODE_INIT(node);
-
-    node->data = data;
+    node_t *node = node_create(data);
 
     if (list->last)
     {
