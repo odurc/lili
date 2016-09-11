@@ -265,3 +265,113 @@ void *lili_pop(lili_t *list)
 {
     return node_remove(list, list->last);
 }
+
+void lili_push_front(lili_t *list, void *data)
+{
+    node_t *node = node_create(data);
+
+    if (list->first)
+    {
+        node->next = list->first;
+        list->first->prev = node;
+        list->first = node;
+    }
+    else
+    {
+        list->first = node;
+        list->last = node;
+    }
+
+    list->count++;
+}
+
+void *lili_pop_front(lili_t *list)
+{
+    return node_remove(list, list->first);
+}
+
+void lili_push_at(lili_t *list, void *data, int index)
+{
+    node_t *curr = 0;
+
+    if (index < 0)
+    {
+        index = ~index;
+
+        if (index > list->count)
+            index = list->count;
+
+        index = list->count - index;
+    }
+
+    if (index == 0)
+    {
+        lili_push_front(list, data);
+    }
+    else if (index >= list->count)
+    {
+        lili_push(list, data);
+    }
+    else if (index < (list->count / 2))
+    {
+        curr = list->first;
+        while (index--)
+            curr = curr->next;
+    }
+    else
+    {
+        index = list->count - index - 1;
+        curr = list->last;
+        while (index--)
+            curr = curr->prev;
+    }
+
+    if (curr)
+    {
+        node_t *node = node_create(data);
+        node->prev = curr->prev;
+        node->next = curr;
+        curr->prev->next = node;
+        curr->prev = node;
+        list->count++;
+    }
+}
+
+void *lili_pop_from(lili_t *list, int index)
+{
+    node_t *curr = 0;
+
+    if (index < 0)
+    {
+        index = ~index;
+
+        if (index > list->count)
+            index = list->count;
+
+        index = list->count - index - 1;
+    }
+
+    if (index <= 0)
+    {
+        return lili_pop_front(list);
+    }
+    else if (index >= list->count)
+    {
+        return lili_pop(list);
+    }
+    else if (index < (list->count / 2))
+    {
+        curr = list->first;
+        while (index--)
+            curr = curr->next;
+    }
+    else
+    {
+        index = list->count - index - 1;
+        curr = list->last;
+        while (index--)
+            curr = curr->prev;
+    }
+
+    return node_remove(list, curr);
+}
