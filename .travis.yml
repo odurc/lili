@@ -1,0 +1,21 @@
+sudo: required
+dist: trusty
+language:
+    - c
+compiler:
+    - gcc
+before_install:
+    - sudo apt-get update -qq
+    - sudo apt-get install -qq valgrind
+script:
+    - make
+    - cd test
+    - make
+    - make run-tests
+    - cd -
+    - make clean
+    - make CONFIG="-DLILI_ONLY_STATIC_ALLOCATION -DLILI_MAX_LISTS=10 -DLILI_MAX_NODES=100"
+    - cd test
+    - make clean
+    - make
+    - make run-tests

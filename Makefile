@@ -1,4 +1,3 @@
-
 CC ?= gcc
 
 # source directory and output name
@@ -13,7 +12,7 @@ CFLAGS += -O3
 endif
 
 # flags
-CFLAGS += -Wall -Wextra -fPIC
+CFLAGS += $(CONFIG) -Wall -Wextra -fPIC
 LDFLAGS += -shared
 
 # libraries
