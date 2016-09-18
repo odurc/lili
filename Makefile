@@ -1,8 +1,11 @@
 CC ?= gcc
 
+# library name
+LIB_NAME = lili
+
 # source directory and output name
 SRC_DIR = src
-OUTPUT = liblili.so
+OUTPUT = lib$(LIB_NAME).so
 
 # flags for debugging
 ifeq ($(DEBUG), 1)
@@ -29,4 +32,4 @@ $(OUTPUT): $(OBJ)
 	$(CC) $(CFLAGS) -o $@ -c $<
 
 clean:
-	rm -f $(OBJ) $(OUTPUT)*
+	rm -f $(OBJ) $(OUTPUT)
