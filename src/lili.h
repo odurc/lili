@@ -36,6 +36,10 @@
 ****************************************************************************************************
 */
 
+// library version
+#define LILI_VERSION    "1.0.0"
+
+// macro to iterate all nodes of a list
 #define LILI_FOREACH(list, var) \
     for(node_t *var = list->first; var; var = var->next)
 
