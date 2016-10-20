@@ -1,4 +1,7 @@
 /*
+ * lili - Linked List Library
+ * https://github.com/ricardocrudo/lili
+ *
  * Copyright (c) 2016 Ricardo Crudo <ricardo.crudo@gmail.com>
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
