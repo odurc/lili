@@ -97,7 +97,7 @@ static node_t g_nodes_cache[LILI_MAX_NODES];
 */
 
 #ifdef LILI_ONLY_STATIC_ALLOCATION
-static inline void *list_take(int n)
+static inline void* list_take(int n)
 {
     // unused parameter
     // it's here to make the function prototype compatible with malloc
@@ -136,7 +136,7 @@ static inline void list_give(void *list)
     }
 }
 
-static inline void *node_take(int n)
+static inline void* node_take(int n)
 {
     // unused parameter
     // it's here to make the function prototype compatible with malloc
@@ -173,7 +173,7 @@ static inline void node_give(void *node)
 }
 #endif
 
-static node_t *node_create(void *data)
+static node_t* node_create(void *data)
 {
     node_t *node = (node_t *) NODE_ALLOC(sizeof (node_t));
 
@@ -185,7 +185,7 @@ static node_t *node_create(void *data)
     return node;
 }
 
-static void *node_remove(lili_t *list, node_t *node)
+static void* node_remove(lili_t *list, node_t *node)
 {
     if (!node)
         return 0;
@@ -226,7 +226,7 @@ static void *node_remove(lili_t *list, node_t *node)
 ****************************************************************************************************
 */
 
-lili_t *lili_create(void)
+lili_t* lili_create(void)
 {
     lili_t *list = (lili_t *) LIST_ALLOC(sizeof (lili_t));
     LIST_INIT(list);
@@ -235,6 +235,12 @@ lili_t *lili_create(void)
 
 void lili_destroy(lili_t *list)
 {
+    lili_clear(list);
+    LIST_FREE(list);
+}
+
+void lili_clear(lili_t *list)
+{
     LILI_FOREACH(list, node)
     {
         if (node->prev)
@@ -242,7 +248,7 @@ void lili_destroy(lili_t *list)
     }
 
     NODE_FREE(list->last);
-    LIST_FREE(list);
+    LIST_INIT(list);
 }
 
 void lili_push(lili_t *list, void *data)
@@ -264,7 +270,7 @@ void lili_push(lili_t *list, void *data)
     list->count++;
 }
 
-void *lili_pop(lili_t *list)
+void* lili_pop(lili_t *list)
 {
     return node_remove(list, list->last);
 }
@@ -288,7 +294,7 @@ void lili_push_front(lili_t *list, void *data)
     list->count++;
 }
 
-void *lili_pop_front(lili_t *list)
+void* lili_pop_front(lili_t *list)
 {
     return node_remove(list, list->first);
 }
@@ -340,7 +346,7 @@ void lili_push_at(lili_t *list, void *data, int index)
     }
 }
 
-void *lili_pop_from(lili_t *list, int index)
+void* lili_pop_from(lili_t *list, int index)
 {
     node_t *curr = 0;
 

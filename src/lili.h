@@ -50,7 +50,7 @@ extern "C"
 
 // macro to iterate all nodes of a list
 #define LILI_FOREACH(list, var) \
-    for(node_t *var = list->first; var; var = var->next)
+    for (node_t *var = list->first; var; var = var->next)
 
 
 /*
@@ -108,7 +108,7 @@ typedef struct lili_t {
  *
  * @return pointer of a list object or NULL if memory allocation fail
  */
-lili_t *lili_create(void);
+lili_t* lili_create(void);
 
 /**
  * Destroy a list
@@ -118,6 +118,15 @@ lili_t *lili_create(void);
  * @param[in] list the list object
  */
 void lili_destroy(lili_t *list);
+
+/**
+ * Clear the list
+ *
+ * All nodes inside of the list will be removed.
+ *
+ * @param[in] list the list object
+ */
+void lili_clear(lili_t *list);
 
 /**
  * Push an item to list
@@ -138,7 +147,7 @@ void lili_push(lili_t *list, void *data);
  *
  * @return the data pointer of the stored item
  */
-void *lili_pop(lili_t *list);
+void* lili_pop(lili_t *list);
 
 /**
  * Push an item to beginning of the list
@@ -159,7 +168,7 @@ void lili_push_front(lili_t *list, void *data);
  *
  * @return the data pointer of the stored item
  */
-void *lili_pop_front(lili_t *list);
+void* lili_pop_front(lili_t *list);
 
 /**
  * Push an item to a specific position of the list
@@ -188,7 +197,7 @@ void lili_push_at(lili_t *list, void *data, int index);
  *
  * @return the data pointer of the stored item
  */
-void *lili_pop_from(lili_t *list, int index);
+void* lili_pop_from(lili_t *list, int index);
 
 /**
  * @}
