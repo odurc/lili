@@ -175,7 +175,7 @@ static inline void node_give(void *node)
 
 static node_t *node_create(void *data)
 {
-    node_t *node = NODE_ALLOC(sizeof (node_t));
+    node_t *node = (node_t *) NODE_ALLOC(sizeof (node_t));
 
     NODE_INIT(node);
 
@@ -228,7 +228,7 @@ static void *node_remove(lili_t *list, node_t *node)
 
 lili_t *lili_create(void)
 {
-    lili_t *list = LIST_ALLOC(sizeof (lili_t));
+    lili_t *list = (lili_t *) LIST_ALLOC(sizeof (lili_t));
     LIST_INIT(list);
     return list;
 }

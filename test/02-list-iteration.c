@@ -21,7 +21,7 @@ int main(void)
     // forward iteration
     for (node_t *node = list->first; node; node = node->next)
     {
-        int *value = node->data;
+        int *value = (int *) node->data;
         printf("data: %i\n", *value);
     }
 
@@ -30,7 +30,7 @@ int main(void)
     // backward iteration
     for (node_t *node = list->last; node; node = node->prev)
     {
-        int *value = node->data;
+        int *value = (int *) node->data;
         printf("data: %i\n", *value);
     }
 

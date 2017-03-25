@@ -26,6 +26,12 @@
 #ifndef LILI_H
 #define LILI_H
 
+#ifdef __cplusplus
+extern "C"
+{
+#endif
+
+
 /*
 ****************************************************************************************************
 *       INCLUDE FILES
@@ -199,5 +205,9 @@ void *lili_pop_from(lili_t *list, int index);
 #error "LILI_ONLY_STATIC_ALLOCATION requires LILI_MAX_LISTS and LILI_MAX_NODES macros definition."
 #endif
 
+#ifdef __cplusplus
+}
+#endif
 
+// LILI_H
 #endif

@@ -19,7 +19,7 @@ int main(void)
     for (int i = 0; i < NODES_COUNT; ++i)
     {
         int *value, j = NODES_COUNT - i - 1;
-        value = lili_pop(list);
+        value = (int *) lili_pop(list);
         if (*value != data[j])
         {
             printf("read wrong value from node (i = %i)\n", i);
