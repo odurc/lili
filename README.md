@@ -43,8 +43,7 @@ will use dynamic memory allocation as any regular linked list library.
 How to use
 ---
 
-To see details how to use the library, please check the online [API documentation]
-(http://ricardocrudo.github.io/lili).
+To see details how to use the library, please check the online [API documentation](http://ricardocrudo.github.io/lili).
 
 
 License
