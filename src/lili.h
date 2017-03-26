@@ -50,7 +50,8 @@ extern "C"
 
 // macro to iterate all nodes of a list
 #define LILI_FOREACH(list, var) \
-    for (node_t *var = list->first; var; var = var->next)
+    int _index = 0; \
+    for (node_t *var = list->first; var; var = var->next, _index++)
 
 
 /*
