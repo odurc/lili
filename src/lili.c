@@ -255,6 +255,9 @@ void lili_push(lili_t *list, void *data)
 {
     node_t *node = node_create(data);
 
+    if (!node)
+        return;
+
     if (list->last)
     {
         list->last->next = node;
