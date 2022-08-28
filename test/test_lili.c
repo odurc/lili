@@ -49,15 +49,34 @@
 ****************************************************************************************************
 */
 
-// this run once before all group tests
-static int group_setup(void **state)
+static int setup(void **state)
 {
+    static lili_t *list;
+    static int data[10];
+
+    list = lili_create();
+    assert_non_null(list);
+
+    // push some data to the list
+    for (int i = 0; i < 10; i++)
+    {
+        data[i] = i;
+        lili_push(list, &data[i]);
+    }
+
+    *state = list;
+
     return 0;
 }
 
-// this run once after all group tests
-static int group_teardown(void **state)
+static int teardown(void **state)
 {
+    lili_t *list = *state;
+    lili_clear(list);
+    assert_int_equal(list->count, 0);
+
+    lili_destroy(list);
+
     return 0;
 }
 
@@ -131,6 +150,27 @@ static void test_max_config(void **state)
     lili_destroy(list);
 }
 
+static void test_iteration(void **state)
+{
+    lili_t *list = *state;
+
+    // forward iteration
+    int data = 0;
+    for (node_t *node = list->first; node; node = node->next, data++)
+    {
+        int *pvalue = (int *) node->data;
+        assert_int_equal(*pvalue, data);
+    }
+
+    // backward iteration
+    data = list->count - 1;
+    for (node_t *node = list->last; node; node = node->prev, data--)
+    {
+        int *pvalue = (int *) node->data;
+        assert_int_equal(*pvalue, data);
+    }
+}
+
 
 /*
 ****************************************************************************************************
@@ -142,7 +182,8 @@ int main(void)
 {
     const struct CMUnitTest tests[] = {
         cmocka_unit_test(test_max_config),
+        cmocka_unit_test_setup_teardown(test_iteration, setup, teardown),
     };
 
-    return cmocka_run_group_tests(tests, group_setup, group_teardown);
+    return cmocka_run_group_tests(tests, NULL, NULL);
 }
