@@ -1,8 +1,8 @@
 /*
  * lili - Linked List Library
- * https://github.com/ricardocrudo/lili
+ * https://gitlab.com/odurc/lili
  *
- * Copyright (c) 2016 Ricardo Crudo <ricardo.crudo@gmail.com>
+ * Copyright (c) 2022 Ricardo Crudo <ricardo.crudo@gmail.com>
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -178,6 +178,9 @@ void* lili_pop_front(lili_t *list);
  * where the first position is zero and the last is list->count.
  * The \a index might also have negative values, where -1 represents
  * the last position, -2 the next-to-last position and so on.
+ * Pushing data to \a index values out-of-range leads to pushing either
+ * to the first or last position depending on whether the index is positive
+ * or negative.
  *
  * @param[in] list the list object
  * @param[in] data the data pointer to be stored
@@ -192,6 +195,9 @@ void lili_push_at(lili_t *list, void *data, int index);
  * where the first position is zero and the last is list->count.
  * The \a index might also have negative values, where -1 represents
  * the last position, -2 the next-to-last position and so on.
+ * Popping data from \a index values out-of-range leads to popping either
+ * from the first or last position depending on whether the index is positive
+ * or negative.
  *
  * @param[in] list the list object
  * @param[in] index the position where to push the item
