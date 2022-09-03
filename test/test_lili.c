@@ -191,57 +191,87 @@ static void test_pushes_and_pops(void **state)
     int values[] = {10, 20, 30, 40, 50, -100};
     int i = 0;
 
-    // push at valid position (positive value)
-    lili_push_at(list, &values[i++], 4);
-    assert_true(check_list_values(list, (const int []){0, 1, 2, 3, 10, 4}));
+    // push at valid positive position on 2nd half of the list
+    lili_push_at(list, &values[i++], 3);
+    assert_true(check_list_values(list, (const int []){0, 1, 2, 10, 3, 4}));
 
     // push at position out of the range (positive value)
     // value should be added at the last position instead
     lili_push_at(list, &values[i++], 25);
-    assert_true(check_list_values(list, (const int []){0, 1, 2, 3, 10, 4, 20}));
+    assert_true(check_list_values(list, (const int []){0, 1, 2, 10, 3, 4, 20}));
 
     // push at position zero, should behave as list_push_front function
     lili_push_at(list, &values[i++], 0);
-    assert_true(check_list_values(list, (const int []){30, 0, 1, 2, 3, 10, 4, 20}));
+    assert_true(check_list_values(list, (const int []){30, 0, 1, 2, 10, 3, 4, 20}));
 
-    // push at valid position (negative value)
+    // push at valid negative position on 2nd half of the list
     lili_push_at(list, &values[i++], -2);
-    assert_true(check_list_values(list, (const int []){30, 0, 1, 2, 3, 10, 4, 40, 20}));
+    assert_true(check_list_values(list, (const int []){30, 0, 1, 2, 10, 3, 4, 40, 20}));
 
     // push at position out of the range (negative value)
     // value should be added at the first position instead
     lili_push_at(list, &values[i++], -23);
-    assert_true(check_list_values(list, (const int []){50, 30, 0, 1, 2, 3, 10, 4, 40, 20}));
+    assert_true(check_list_values(list, (const int []){50, 30, 0, 1, 2, 10, 3, 4, 40, 20}));
 
     // push front
     lili_push_front(list, &values[i++]);
-    assert_true(check_list_values(list, (const int []){-100, 50, 30, 0, 1, 2, 3, 10, 4, 40, 20}));
+    assert_true(check_list_values(list, (const int []){-100, 50, 30, 0, 1, 2, 10, 3, 4, 40, 20}));
 
     // pop front
     lili_pop_front(list);
-    assert_true(check_list_values(list, (const int []){50, 30, 0, 1, 2, 3, 10, 4, 40, 20}));
+    assert_true(check_list_values(list, (const int []){50, 30, 0, 1, 2, 10, 3, 4, 40, 20}));
 
     // pop from position zero, should behave like pop_front function
     lili_pop_from(list, 0);
-    assert_true(check_list_values(list, (const int []){30, 0, 1, 2, 3, 10, 4, 40, 20}));
+    assert_true(check_list_values(list, (const int []){30, 0, 1, 2, 10, 3, 4, 40, 20}));
 
-    // pop from valid position (negative value)
+    // pop from valid negative position on 2nd half of the list
     lili_pop_from(list, -1);
-    assert_true(check_list_values(list, (const int []){30, 0, 1, 2, 3, 10, 4, 40}));
+    assert_true(check_list_values(list, (const int []){30, 0, 1, 2, 10, 3, 4, 40}));
 
     // pop from position out of the range (positive value)
     // value should be poped from the last position instead
     lili_pop_from(list, 100);
-    assert_true(check_list_values(list, (const int []){30, 0, 1, 2, 3, 10, 4}));
+    assert_true(check_list_values(list, (const int []){30, 0, 1, 2, 10, 3, 4}));
 
     // pop from position out of the range (negative value)
     // value should be added at the first position instead
     lili_pop_from(list, -50);
-    assert_true(check_list_values(list, (const int []){0, 1, 2, 3, 10, 4}));
+    assert_true(check_list_values(list, (const int []){0, 1, 2, 10, 3, 4}));
 
-    // pop from valid position (positive value)
-    lili_pop_from(list, 4);
+    // pop from valid positive position on 2nd half of the list
+    lili_pop_from(list, 3);
     assert_true(check_list_values(list, (const int []){0, 1, 2, 3, 4}));
+
+    i = 0;
+
+    // push at valid positive position on 1st half of the list
+    lili_push_at(list, &values[i++], 1);
+    assert_true(check_list_values(list, (const int []){0, 10, 1, 2, 3, 4}));
+
+    // pop from valid positive position on 1st half of the list
+    lili_pop_from(list, 1);
+    assert_true(check_list_values(list, (const int []){0, 1, 2, 3, 4}));
+
+    // create another list to test corner cases
+    lili_t* another_list = lili_create();
+    assert_non_null(another_list);
+
+    // test push_front on an empty list
+    int value = 123, *pvalue;
+    lili_push_front(another_list, &value);
+    assert_int_equal(another_list->count, 1);
+
+    // pop value back
+    pvalue = lili_pop_front(another_list);
+    assert_int_equal(another_list->count, 0);
+    assert_int_equal(value, *pvalue);
+
+    // test pop_front on an empty list
+    pvalue = lili_pop_front(another_list);
+    assert_null(pvalue);
+
+    lili_destroy(another_list);
 }
 
 
