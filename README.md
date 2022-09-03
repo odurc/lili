@@ -1,23 +1,30 @@
 lili
 ====
 
-A doubly linked list library implemented in C. The library can be built to use only static
-memory allocation, what make it interesting to employ in microcontrollers projects or other
-devices used in embedded system.
-
+A doubly linked list library implemented in C. By the default the is configured to use only static
+memory allocation which makes its use interesting for microcontrollers. However, it's also possible
+to use dynamic memory allocation and configure your own `malloc` and `free` functions.
 
 Features
 ---
 
+* push at and pop from functions supporting negative index
+* configurable static or dynamic memory allocation
+* user configurable memory allocation functions
 * no external dependency
-* configurable to use only static memory allocation
-
+* easy to use and setup
 
 How to install
 ---
 
-Simply copy the content of src directory to your work directory.
+There is no installation, simply copy the content of `src` directory to your work directory and
+adjust your build file or IDE as necessary.
 
+How to use
+---
+
+To see details how to use the library, please check the online
+[API documentation](http://odurc.gitlab.io/lili).
 
 Configuration
 ---
@@ -25,26 +32,35 @@ Configuration
 The configuration of the library is done by setting 'define' macros in the header file,
 under the configuration section.
 
-In order to use only static memory allocation, three 'define' macros need to be declared,
-*LILI_ONLY_STATIC_ALLOCATION*, *LILI_MAX_LISTS* and *LILI_MAX_NODES*.
+By default the library is configured to use only static memory allocation via define' macros as
+shown below.
 
-    #define LILI_ONLY_STATIC_ALLOCATION
-    #define LILI_MAX_LISTS      10
-    #define LILI_MAX_NODES      100
+```c
+#define LILI_ONLY_STATIC_ALLOCATION
+#define LILI_MAX_LISTS      10
+#define LILI_MAX_NODES      100
+```
 
-As the macros name suggest the definitions are used to set the maximum number of lists and nodes.
-As expected, all objects are previously allocated as static variables and managed internally by the
-library.
+As the macros name suggest the definitions are used to enable static memory usage, set the maximum
+number of lists and maximum number of nodes, respectively.
+All objects are previously allocated as static variables and managed internally by the library. Note
+that the maximum number of nodes is general and not per list.
 
-The default configuration, i.e. when no 'define' macros is declared (or they are kept commented out),
-will use dynamic memory allocation as any regular linked list library.
+When the macros above are not defined (or commented out) the library uses dynamic memory allocation
+and by default `malloc` and `free` are used to manage memory. To change this behavior to use your
+own functions, define the macros as the example below and include the header for your library.
 
+```c
+#include "FreeRTOS.h"
+//...
+#define MALLOC(n)       pvPortMalloc(n)
+#define FREE(p)         vPortFree(p)
+```
 
-How to use
----
-
-To see details how to use the library, please check the online [API documentation](http://ricardocrudo.github.io/lili).
-
+Note that the macros are intentionally not prefixed with `LILI_` to facilitate a global definition
+in case you use multiple libraries with this same concept of supporting custom `malloc` and `free`
+functions. In this case, you can define the macros above on `config.h` for example and it would be
+enough to add `#include "config.h` to `lili.h`.
 
 License
 ---
