@@ -46,7 +46,7 @@ extern "C"
 */
 
 // library version
-#define LILI_VERSION    "1.1.0"
+#define LILI_VERSION    "1.1.1"
 
 // macro to iterate all nodes of a list
 #define LILI_FOREACH(list, var) \
